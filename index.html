@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reciclaje Inteligente</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Reconocimiento de Materiales Reciclables</h1>
+        <div id="reciclaje-icon">
+            ♻️
+        </div>
+    </header>
+
+    <main>
+        <div class="intro">
+            <p>¡Usa tu cámara para clasificar materiales reciclables y no reciclables!</p>
+            <button type="button" onclick="init()">Iniciar</button>
+        </div>
+
+        <div class="camera-container">
+            <div id="webcam-container"></div>
+            <div id="label-container"></div>
+        </div>
+
+        <div class="result">
+            <h2>Resultado: <span id="result-text">Esperando...</span></h2>
+        </div>
+    </main>
+
+    <footer>
+        <p>Hecho con ❤️ por el futuro del planeta</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <script type="text/javascript">
+        // Enlace al modelo de Teachable Machine
+        const URL = "./my_model/";
+
+        let model, webcam, labelContainer, maxPredictions;
+
+        // Inicializa el modelo y la cámara
+        async function init() {
+            const modelURL = URL + "model.json";
+            const metadataURL = URL + "metadata.json";
+
+            // Carga el modelo y los metadatos
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
+
+            // Configura la cámara
+            const flip = true;
+            webcam = new tmImage.Webcam(400, 400, flip);
+            await webcam.setup();
+            await webcam.play();
+            window.requestAnimationFrame(loop);
+
+            // Añade la cámara al DOM
+            document.getElementById("webcam-container").appendChild(webcam.canvas);
+            labelContainer = document.getElementById("label-container");
+            for (let i = 0; i < maxPredictions; i++) {
+                labelContainer.appendChild(document.createElement("div"));
+            }
+        }
+
+        // Función para predecir en cada frame
+        async function loop() {
+            webcam.update();
+            await predict();
+            window.requestAnimationFrame(loop);
+        }
+
+        // Realiza la predicción del modelo
+        async function predict() {
+            const prediction = await model.predict(webcam.canvas);
+            for (let i = 0; i < maxPredictions; i++) {
+                const classPrediction = prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+                labelContainer.childNodes[i].innerHTML = classPrediction;
+
+                // Muestra el resultado en el HTML
+                const resultText = document.getElementById("result-text");
+                const topPrediction = prediction[0];
+                resultText.textContent = `${topPrediction.className} (${(topPrediction.probability * 100).toFixed(2)}%)`;
+
+                // Cambia el color según el tipo de material
+                if (topPrediction.className === "Reciclable") {
+                    resultText.style.color = "#388e3c"; // Verde para reciclables
+                } else {
+                    resultText.style.color = "#d32f2f"; // Rojo para no reciclables
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+
+/* Estilo general */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e6f7e6; /* Fondo verde claro */
+    color: #2e8b57; /* Texto verde oscuro */
+    margin: 0;
+    padding: 0;
+}
+
+/* Encabezado */
+header {
+    background-color: #388e3c; /* Verde oscuro */
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+#reciclaje-icon {
+    font-size: 50px;
+    margin-top: 10px;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+/* Contenedor principal */
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.intro {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #388e3c;
+    color: white;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #2e7d32;
+}
+
+/* Cámara */
+.camera-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+video {
+    border: 5px solid #2e8b57;
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+}
+
+#label-container {
+    margin-top: 20px;
+}
+
+/* Resultado */
+.result {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    color: #2e8b57;
+}
+
+/* Pie de página */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 0.9rem;
+}
