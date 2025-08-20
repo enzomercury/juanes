@@ -1,0 +1,87 @@
+/* Estilo general */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e6f7e6; /* Fondo verde claro */
+    color: #2e8b57; /* Texto verde oscuro */
+    margin: 0;
+    padding: 0;
+}
+
+/* Encabezado */
+header {
+    background-color: #388e3c; /* Verde oscuro */
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+#reciclaje-icon {
+    font-size: 50px;
+    margin-top: 10px;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+/* Contenedor principal */
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.intro {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #388e3c;
+    color: white;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #2e7d32;
+}
+
+/* Cámara */
+.camera-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+video {
+    border: 5px solid #2e8b57;
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+}
+
+#label-container {
+    margin-top: 20px;
+}
+
+/* Resultado */
+.result {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    color: #2e8b57;
+}
+
+/* Pie de página */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 0.9rem;
+}
